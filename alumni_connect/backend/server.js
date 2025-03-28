@@ -12,7 +12,7 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite default port
+  origin: 'https://alumni-connect-iota-three.vercel.app', // Vite default port
   credentials: true
 }));
 
