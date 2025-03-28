@@ -25,7 +25,8 @@ const userSchema = new mongoose.Schema({
       phone: String,
       location: String,
       avatar: String,
-      department: String
+      department: String,
+      designation: String  // Add designation field here
     },
     professional: {
       currentCompany: String,
@@ -35,7 +36,7 @@ const userSchema = new mongoose.Schema({
       achievements: [String]
     },
     academic: {
-      graduationYear: String,
+      graduationYear: String,  // Add graduationYear field here
       degree: String,
       specialization: String,
       qualifications: [String],

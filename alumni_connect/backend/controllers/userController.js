@@ -46,7 +46,10 @@ export const updateProfile = async (req, res) => {
 
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const user = await User.findById(req.params.id)
+      .select('-password')
+      .lean();
+    
     if (user) {
       res.json(user);
     } else {

@@ -27,3 +27,19 @@ export const admin = (req, res, next) => {
     res.status(401).json({ message: 'Not authorized as admin' });
   }
 };
+
+export const facultyOrAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === 'faculty' || req.user.role === 'admin')) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized, faculty/admin only' });
+  }
+};
+
+export const allowViewAlumni = async (req, res, next) => {
+  if (req.user && ['admin', 'faculty', 'alumni'].includes(req.user.role)) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized to view alumni' });
+  }
+};

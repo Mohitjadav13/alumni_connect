@@ -2,11 +2,12 @@ import User from '../models/User.js';
 import { sendWelcomeEmail } from '../utils/emailService.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import Event from '../models/Event.js';  // Add this import at the top
 
 // Add faculty
 export const addFaculty = async (req, res) => {
   try {
-    const { name, email, department, password } = req.body;
+    const { name, email, password, department, designation } = req.body;
     
     const facultyExists = await User.findOne({ email });
     if (facultyExists) {
@@ -20,7 +21,8 @@ export const addFaculty = async (req, res) => {
       role: 'faculty',
       profile: {
         basicInfo: {
-          department
+          department: department,
+          designation: designation
         }
       }
     });
@@ -31,7 +33,8 @@ export const addFaculty = async (req, res) => {
       _id: faculty._id,
       name: faculty.name,
       email: faculty.email,
-      role: faculty.role
+      role: faculty.role,
+      profile: faculty.profile
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -41,7 +44,7 @@ export const addFaculty = async (req, res) => {
 // Add alumni
 export const addAlumni = async (req, res) => {
   try {
-    const { name, email, password, graduationYear, department } = req.body;
+    const { name, email, password, profile } = req.body;
     
     const alumniExists = await User.findOne({ email });
     if (alumniExists) {
@@ -55,10 +58,10 @@ export const addAlumni = async (req, res) => {
       role: 'alumni',
       profile: {
         basicInfo: {
-          department
+          department: profile.basicInfo.department
         },
         academic: {
-          graduationYear
+          graduationYear: profile.academic.graduationYear
         }
       }
     });
@@ -69,7 +72,8 @@ export const addAlumni = async (req, res) => {
       _id: alumni._id,
       name: alumni.name,
       email: alumni.email,
-      role: alumni.role
+      role: alumni.role,
+      profile: alumni.profile
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -79,7 +83,9 @@ export const addAlumni = async (req, res) => {
 // Get all faculty
 export const getAllFaculty = async (req, res) => {
   try {
-    const faculty = await User.find({ role: 'faculty' }).select('-password');
+    const faculty = await User.find({ role: 'faculty' })
+      .select('-password')
+      .lean();
     res.json(faculty);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -89,7 +95,9 @@ export const getAllFaculty = async (req, res) => {
 // Get all alumni
 export const getAllAlumni = async (req, res) => {
   try {
-    const alumni = await User.find({ role: 'alumni' }).select('-password');
+    const alumni = await User.find({ role: 'alumni' })
+      .select('-password')
+      .lean();
     res.json(alumni);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -149,7 +157,10 @@ export const removeFaculty = async (req, res) => {
       return res.status(404).json({ message: 'Faculty not found' });
     }
 
-    res.json({ message: 'Faculty removed successfully' });
+    // Delete all events created by this faculty
+    await Event.deleteMany({ createdBy: req.params.id });
+
+    res.json({ message: 'Faculty and their events removed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
