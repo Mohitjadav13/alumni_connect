@@ -17,6 +17,7 @@ import ViewAlumni from "./pages/faculty/ViewAlumni";
 import CreateEvents from "./pages/faculty/CreateEvents";
 import NotifyAlumni from "./pages/faculty/NotifyAlumni";
 import FacultyProfile from "./pages/faculty/FacultyProfile";
+import EditEvent from "./pages/faculty/EditEvent";
 import AlumniDashboard from "./pages/alumni/AlumniDashboard";
 import ViewEvents from "./pages/alumni/ViewEvents";
 import ViewAlumniProfiles from "./pages/alumni/ViewAlumniProfiles";
@@ -50,6 +51,7 @@ function App() {
             <Route path="/faculty/view-alumni" element={<ViewAlumni />} />
             <Route path="/faculty/create-events" element={<CreateEvents />} />
             <Route path="/faculty/notify-alumni" element={<NotifyAlumni />} />
+            <Route path="/faculty/edit-event/:id" element={<EditEvent />} />
           </Route>
 
           {/* Alumni Routes */}

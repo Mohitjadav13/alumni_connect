@@ -1,8 +1,10 @@
 import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom"; // Add this import
 import { AuthContext } from "../../context/AuthContext";
 
 const CreateEvents = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate(); // Add this
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
@@ -28,9 +30,11 @@ const CreateEvents = () => {
       if (res.ok) {
         alert('Event created successfully!');
         setEventData({ title: '', description: '', date: '', venue: '' });
+        navigate('/faculty'); // Add this to redirect after success
       }
     } catch (error) {
       console.error('Error creating event:', error);
+      alert('Failed to create event. Please try again.');
     }
   };
 

@@ -1,11 +1,19 @@
 import React, { useState, useContext } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const AlumniLayout = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext); // Add setUser from context
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate(); // Add useNavigate hook
+
+  const handleSignOut = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('userToken');
+    navigate('/login');
+  };
 
   return (
     <div>
@@ -58,10 +66,10 @@ const AlumniLayout = () => {
                       My Profile
                     </Link>
                     <button
-                      onClick={() => {/* Add logout handler */}}
+                      onClick={handleSignOut}
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                     >
-                      Logout
+                      Sign Out
                     </button>
                   </div>
                 )}

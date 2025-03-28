@@ -77,8 +77,8 @@ const FacultyList = () => {
               <div>
                 <h3 className="font-bold text-lg">{f.name}</h3>
                 <p className="text-gray-600">{f.email}</p>
-                <p className="text-gray-600">{f.profile?.basicInfo?.department}</p>
-                <p className="text-gray-600">{f.profile?.basicInfo?.designation}</p>
+                <p className="text-gray-600">Department: {f.profile?.basicInfo?.department || 'Not specified'}</p>
+                <p className="text-gray-600">Designation: {f.profile?.basicInfo?.designation || 'Not specified'}</p>
               </div>
               <button
                 onClick={() => handleRemove(f._id)}

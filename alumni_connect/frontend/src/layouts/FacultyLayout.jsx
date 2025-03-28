@@ -10,9 +10,15 @@ const FacultyLayout = () => {
 
   const handleSignOut = () => {
     setUser(null);
+    localStorage.removeItem('user');
     localStorage.removeItem('userToken');
     navigate('/login');
   };
+
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
 
   return (
     <div>
@@ -23,10 +29,7 @@ const FacultyLayout = () => {
               <Link to="/faculty" className="text-xl font-bold">Faculty Portal</Link>
               <div className="flex space-x-4">
                 {[
-                  { path: '/faculty', label: 'Dashboard' },
-                  { path: '/faculty/create-events', label: 'Create Event' },
-                  { path: '/faculty/view-alumni', label: 'Alumni List' },
-                  { path: '/faculty/notify-alumni', label: 'Notifications' }
+                  { path: '/faculty', label: 'Dashboard' }
                 ].map(({ path, label }) => (
                   <Link
                     key={path}

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ViewAlumni = () => {
   const [alumni, setAlumni] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAlumni();
@@ -10,12 +12,31 @@ const ViewAlumni = () => {
 
   const fetchAlumni = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/alumni`);
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/alumni`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to fetch alumni');
+      }
+
       const data = await res.json();
       setAlumni(data);
     } catch (error) {
       console.error('Error fetching alumni:', error);
+      alert('Error loading alumni data');
     }
+  };
+
+  const handleBack = () => {
+    navigate('/faculty');
   };
 
   const filteredAlumni = alumni.filter(alumnus => 
@@ -25,7 +46,15 @@ const ViewAlumni = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">View Alumni</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">View Alumni</h2>
+        <button
+          onClick={handleBack}
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Back to Dashboard
+        </button>
+      </div>
       <input
         type="text"
         placeholder="Search by name or department..."
@@ -33,20 +62,84 @@ const ViewAlumni = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredAlumni.map((alumnus) => (
-          <div key={alumnus._id} className="border p-4 rounded shadow">
-            <h3 className="font-bold text-lg">{alumnus.name}</h3>
-            <div className="mt-2 space-y-1">
-              <p><span className="font-semibold">Email:</span> {alumnus.email}</p>
-              <p><span className="font-semibold">Department:</span> {alumnus.profile?.department}</p>
-              <p><span className="font-semibold">Graduation Year:</span> {alumnus.profile?.graduationYear}</p>
-              <p><span className="font-semibold">Company:</span> {alumnus.profile?.currentCompany}</p>
-              <p><span className="font-semibold">Mobile:</span> {alumnus.profile?.mobile}</p>
+      {filteredAlumni.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredAlumni.map((alumnus) => (
+            <div key={alumnus._id} className="border p-4 rounded shadow hover:shadow-lg transition-shadow">
+              <div className="flex items-center space-x-3 mb-3">
+                <img
+                  src={alumnus.profile?.basicInfo?.avatar || `https://ui-avatars.com/api/?name=${alumnus.name}`}
+                  alt={alumnus.name}
+                  className="w-12 h-12 rounded-full"
+                />
+                <div>
+                  <h3 className="font-bold text-lg">{alumnus.name}</h3>
+                  <p className="text-gray-600 text-sm">
+                    {alumnus.profile?.professional?.designation || 'Not specified'}
+                    {alumnus.profile?.professional?.currentCompany && 
+                      ` at ${alumnus.profile.professional.currentCompany}`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2 text-sm">
+                {/* Academic Info */}
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <h4 className="font-semibold text-blue-800 mb-1">Academic Information</h4>
+                  <p><span className="font-medium">Department:</span> {alumnus.profile?.basicInfo?.department || 'Not specified'}</p>
+                  <p><span className="font-medium">Graduation Year:</span> {alumnus.profile?.academic?.graduationYear || 'Not specified'}</p>
+                  <p><span className="font-medium">Degree:</span> {alumnus.profile?.academic?.degree || 'Not specified'}</p>
+                </div>
+
+                {/* Professional Info */}
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <h4 className="font-semibold text-green-800 mb-1">Professional Information</h4>
+                  <p><span className="font-medium">Experience:</span> {alumnus.profile?.professional?.experience || 'Not specified'}</p>
+                  <p><span className="font-medium">Skills:</span> {alumnus.profile?.professional?.skills?.join(', ') || 'Not specified'}</p>
+                </div>
+
+                {/* Contact Info */}
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <h4 className="font-semibold text-purple-800 mb-1">Contact Information</h4>
+                  <p><span className="font-medium">Email:</span> {alumnus.email}</p>
+                  <p><span className="font-medium">Phone:</span> {alumnus.profile?.basicInfo?.phone || 'Not specified'}</p>
+                  <p><span className="font-medium">Location:</span> {alumnus.profile?.basicInfo?.location || 'Not specified'}</p>
+                </div>
+
+                {/* Social Links */}
+                {(alumnus.profile?.social?.linkedin || alumnus.profile?.social?.github) && (
+                  <div className="flex space-x-3 mt-2">
+                    {alumnus.profile?.social?.linkedin && (
+                      <a 
+                        href={alumnus.profile.social.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        LinkedIn
+                      </a>
+                    )}
+                    {alumnus.profile?.social?.github && (
+                      <a 
+                        href={alumnus.profile.social.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-600 hover:text-gray-800"
+                      >
+                        GitHub
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center text-gray-500 py-4">
+          No alumni found matching your search criteria.
+        </div>
+      )}
     </div>
   );
 };

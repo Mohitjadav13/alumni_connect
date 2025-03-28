@@ -77,8 +77,8 @@ const AlumniList = () => {
               <div>
                 <h3 className="font-bold text-lg">{alumnus.name}</h3>
                 <p className="text-gray-600">{alumnus.email}</p>
-                <p className="text-gray-600">{alumnus.profile?.department}</p>
-                <p className="text-gray-600">{alumnus.profile?.graduationYear}</p>
+                <p className="text-gray-600">Department: {alumnus.profile?.basicInfo?.department || 'Not specified'}</p>
+                <p className="text-gray-600">Graduation Year: {alumnus.profile?.academic?.graduationYear || 'Not specified'}</p>
               </div>
               <button
                 onClick={() => handleRemove(alumnus._id)}
