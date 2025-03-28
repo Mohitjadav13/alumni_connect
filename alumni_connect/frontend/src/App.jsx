@@ -8,6 +8,10 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageAlumni from "./pages/admin/ManageAlumni";
 import ManageFaculty from "./pages/admin/ManageFaculty";
 import SendEmails from "./pages/admin/SendEmails";
+import AlumniList from "./pages/admin/AlumniList";
+import FacultyList from "./pages/admin/FacultyList";
+import AddAlumni from "./pages/admin/AddAlumni";
+import AddFaculty from "./pages/admin/AddFaculty";
 import FacultyDashboard from "./pages/faculty/FacultyDashboard";
 import ViewAlumni from "./pages/faculty/ViewAlumni";
 import CreateEvents from "./pages/faculty/CreateEvents";
@@ -32,8 +36,10 @@ function App() {
           {/* Admin Routes */}
           <Route element={<AdminLayout />}>
             <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/manage-alumni" element={<ManageAlumni />} />
-            <Route path="/manage-faculty" element={<ManageFaculty />} />
+            <Route path="/alumni-list" element={<AlumniList />} />
+            <Route path="/faculty-list" element={<FacultyList />} />
+            <Route path="/admin/add-alumni" element={<AddAlumni />} />
+            <Route path="/admin/add-faculty" element={<AddFaculty />} />
             <Route path="/send-emails" element={<SendEmails />} />
           </Route>
 

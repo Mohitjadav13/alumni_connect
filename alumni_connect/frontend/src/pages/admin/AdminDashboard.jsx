@@ -1,11 +1,49 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const [counts, setCounts] = useState({
+    alumni: 0,
+    faculty: 0,
+    events: 0
+  });
+
+  const fetchCounts = async () => {
+    try {
+      // Get alumni count
+      const alumniRes = await fetch(`${import.meta.env.VITE_API_URL}/admin/alumni`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+        }
+      });
+      const alumniData = await alumniRes.json();
+
+      // Get faculty count
+      const facultyRes = await fetch(`${import.meta.env.VITE_API_URL}/admin/faculty`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+        }
+      });
+      const facultyData = await facultyRes.json();
+
+      setCounts({
+        alumni: alumniData.length,
+        faculty: facultyData.length,
+        events: 5 // You can make this dynamic too if needed
+      });
+    } catch (error) {
+      console.error('Error fetching counts:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCounts();
+  }, []);
+
   const stats = [
-    { title: "Total Alumni", count: 156, color: "bg-blue-500" },
-    { title: "Active Faculty", count: 24, color: "bg-green-500" },
-    { title: "Events This Month", count: 5, color: "bg-purple-500" },
+    { title: "Total Alumni", count: counts.alumni, color: "bg-blue-500" },
+    { title: "Active Faculty", count: counts.faculty, color: "bg-green-500" },
+    { title: "Events This Month", count: counts.events, color: "bg-purple-500" },
   ];
 
   return (
@@ -31,7 +69,7 @@ const AdminDashboard = () => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link to="/manage-alumni" className="card p-6 hover:scale-105 transition-transform duration-200">
+        <Link to="/admin/add-alumni" className="card p-6 hover:scale-105 transition-transform duration-200">
           <div className="flex items-center">
             <div className="bg-blue-100 rounded-full p-3 mr-4">
               <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -39,13 +77,13 @@ const AdminDashboard = () => {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">Manage Alumni</h3>
-              <p className="text-sm text-gray-600">Add, edit, or remove alumni profiles</p>
+              <h3 className="text-lg font-semibold text-gray-800">Add Alumni</h3>
+              <p className="text-sm text-gray-600">Add new alumni to the system</p>
             </div>
           </div>
         </Link>
 
-        <Link to="/manage-faculty" className="card p-6 hover:scale-105 transition-transform duration-200">
+        <Link to="/admin/add-faculty" className="card p-6 hover:scale-105 transition-transform duration-200">
           <div className="flex items-center">
             <div className="bg-green-100 rounded-full p-3 mr-4">
               <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,8 +91,8 @@ const AdminDashboard = () => {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">Manage Faculty</h3>
-              <p className="text-sm text-gray-600">Handle faculty accounts</p>
+              <h3 className="text-lg font-semibold text-gray-800">Add Faculty</h3>
+              <p className="text-sm text-gray-600">Add new faculty members</p>
             </div>
           </div>
         </Link>
@@ -72,6 +110,21 @@ const AdminDashboard = () => {
             </div>
           </div>
         </Link>
+      </div>
+
+      {/* Quick Links */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Quick Links</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <Link to="/alumni-list" 
+            className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <span className="text-blue-600 font-medium">View Alumni List →</span>
+          </Link>
+          <Link to="/faculty-list"
+            className="p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+            <span className="text-green-600 font-medium">View Faculty List →</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

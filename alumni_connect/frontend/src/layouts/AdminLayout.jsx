@@ -25,9 +25,9 @@ const AdminLayout = () => {
             </div>
             <div className="flex items-center space-x-4">
               {[
-                { path: '/', label: 'Dashboard' },
-                { path: '/manage-alumni', label: 'Manage Alumni' },
-                { path: '/manage-faculty', label: 'Manage Faculty' },
+                { path: '/admin', label: 'Dashboard' },
+                { path: '/alumni-list', label: 'Alumni List' },
+                { path: '/faculty-list', label: 'Faculty List' },
                 { path: '/send-emails', label: 'Send Emails' }
               ].map(({ path, label }) => (
                 <Link
